@@ -29,6 +29,7 @@ async function run() {
     const productCollection = database.collection("AllProducts");
     const userCollection = database.collection("Users");
     const reviewCollection = database.collection("Reviews");
+    const orderCollection = database.collection("Orders");
 
     ///////////getting all products api calls
     app.get("/allproducts", async (req, res) => {
@@ -74,6 +75,35 @@ async function run() {
       const Reviewresult = await reviewCollection.insertOne(userReview);
       // console.log(carresult);
       res.json(Reviewresult);
+    });
+
+    //order service collection
+    app.post("/placeorder", async (req, res) => {
+      const orderinfo = req.body;
+      const orderresult = await orderCollection.insertOne(orderinfo);
+      res.json(orderresult);
+    });
+
+    //getting specific user order with email
+    app.get("/userorders", async (req, res) => {
+      const email = req.query.email;
+      const query = { useremail: email };
+      const cursor = orderCollection.find(query);
+      const userordered = await cursor.toArray();
+      res.json(userordered);
+    });
+    //allusers oders for admin users
+    app.get("/allorders", async (req, res) => {
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+      res.send(orders);
+    });
+    //deleting order api for admin site
+    app.delete("/deleteorder/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.deleteOne(query);
+      res.json(result);
     });
   } finally {
     //do something w
