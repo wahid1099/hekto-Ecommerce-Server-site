@@ -30,6 +30,7 @@ async function run() {
     const userCollection = database.collection("Users");
     const reviewCollection = database.collection("Reviews");
     const orderCollection = database.collection("Orders");
+    const serviceCollection = database.collection("ourServices");
 
     ///////////getting all products api calls
     app.get("/allproducts", async (req, res) => {
@@ -104,6 +105,13 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const result = await orderCollection.deleteOne(query);
       res.json(result);
+    });
+
+    ///////////getting all services
+    app.get("/allservices", async (req, res) => {
+      const cursor = serviceCollection.find({});
+      const allservices = await cursor.toArray();
+      res.json(allservices);
     });
   } finally {
     //do something w
