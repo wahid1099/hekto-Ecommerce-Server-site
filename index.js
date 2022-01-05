@@ -153,6 +153,18 @@ async function run() {
       res.json(result);
     });
 
+    //checking admin from database
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role == "admin") {
+        isAdmin = true;
+      }
+      res.json({ admin: isAdmin });
+    });
+
     ////////////////////////////////making admin and giving
     app.put("/users/admin", verifyToken, async (req, res) => {
       const user = req.body;
